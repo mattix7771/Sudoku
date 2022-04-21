@@ -9,6 +9,9 @@ namespace Sudoku
         static (int, int) coordinates = (0,0);
         const int board_len = 27;
 
+        //static int LargestWindowWidth = 170;
+        //static int LargestWindowHeight = 40;
+
         static int[,] matrix = new int[9, 9] { { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
                                                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
@@ -18,6 +21,17 @@ namespace Sudoku
                                                { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
                                                { 0, 0, 5, 2, 0, 6, 3, 0, 0 }
+            };
+
+        static int[,] old_matrix = new int[9, 9] {  { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
+                                                    { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
+                                                    { 0, 0, 3, 0, 1, 0, 0, 8, 0 },
+                                                    { 9, 0, 0, 8, 6, 3, 0, 0, 5 },
+                                                    { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
+                                                    { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
+                                                    { 0, 0, 5, 2, 0, 6, 3, 0, 0 }
             };
 
         /*static int[,] matrix = new int[9, 9] { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -35,8 +49,9 @@ namespace Sudoku
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.ForegroundColor = ConsoleColor.White;
+            //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            Console.SetWindowSize(170,41);
 
-            Welcome();
 
             menu();
 
@@ -49,9 +64,24 @@ namespace Sudoku
 
             while(true)
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                (int, int) pos = Console.GetCursorPosition();
+                int val = matrix[coordinates.Item2, coordinates.Item1];
 
                 var key = Console.ReadKey().Key;
+
+/*
+                List<ConsoleKey> forbidden_keys = new List<ConsoleKey>();
+                forbidden_keys.Add(ConsoleKey.Tab);
+                
+                if(forbidden_keys.Contains(Console.ReadKey().Key)){
+                    key = Console.ReadKey(false).Key;
+                }
+                else{
+                    key = Console.ReadKey(true).Key;
+                }*/
+                    
+                
+                
 
                 switch (key)
                 {
@@ -59,11 +89,26 @@ namespace Sudoku
 
                         MessageClear();
 
+                        /*
+                        By default, upon clicking any arrow key in the terminal while also being inside a running application,
+                        the terminal will overwrite any character upon which the cursor is on and move one unit to the right.
+                        The following few lines of code are to couteract it. Similar code is also present on the cases for the 
+                        other arrow keys.
+                        */
+                        
                         (int, int) pos_up = Console.GetCursorPosition();
+
+                        Console.SetCursorPosition(pos_up.Item1 -1, pos_up.Item2);
+                        if(val == 0)
+                            Console.Write(' ');
+                        else
+                            Console.Write(val);
+                        Console.SetCursorPosition(pos_up.Item1 -1, pos_up.Item2);
+                        
                         if (pos_up.Item2 > 1)
                         {
-                            Message(pos_up.ToString());
-                            Console.SetCursorPosition(pos_up.Item1, pos_up.Item2 - 1);
+                            //Message(pos_up.ToString());
+                            Console.SetCursorPosition(pos_up.Item1 - 1, pos_up.Item2 - 1);
                             coordinates = (coordinates.Item1, coordinates.Item2 - 1);
                         }
                         else
@@ -75,9 +120,20 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_down = Console.GetCursorPosition();
+
+                        //Counteract termial behaviour
+                        Console.SetCursorPosition(pos_down.Item1 -1, pos_down.Item2);
+                        if(val == 0)
+                            Console.Write(' ');
+                        else
+                            Console.Write(val);
+                        Console.SetCursorPosition(pos_down.Item1 -1, pos_down.Item2);
+                        
+
                         if (pos_down.Item2 < 9)
                         {
-                            Console.SetCursorPosition(pos_down.Item1, pos_down.Item2 + 1);
+                            //Message(pos_down.ToString());
+                            Console.SetCursorPosition(pos_down.Item1 - 1, pos_down.Item2 + 1);
                             coordinates = (coordinates.Item1, coordinates.Item2 + 1);
                         }
                         else
@@ -85,13 +141,24 @@ namespace Sudoku
                         break;
 
                     case ConsoleKey.LeftArrow:
-
+                        
                         MessageClear();
 
                         (int, int) pos_left = Console.GetCursorPosition();
-                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2))
+
+                        //Counteract termial behaviour
+                        Console.SetCursorPosition(pos_left.Item1 -1, pos_left.Item2);
+                        if(val == 0)
+                            Console.Write(' ');
+                        else
+                            Console.Write(val);
+                        Console.SetCursorPosition(pos_left.Item1 -1, pos_left.Item2);
+                    
+                        
+                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2)+1)
                         {
-                            Console.SetCursorPosition(pos_left.Item1 - 3, pos_left.Item2);
+                            //Message(pos_left.ToString());
+                            Console.SetCursorPosition(pos_left.Item1 - 4, pos_left.Item2);
                             coordinates = (coordinates.Item1 - 1, coordinates.Item2);
                         }
                         else
@@ -103,9 +170,20 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_right = Console.GetCursorPosition();
-                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-3)
+
+                        //Counteract termial behaviour
+                        Console.SetCursorPosition(pos_right.Item1 -1, pos_right.Item2);
+                        if(val == 0)
+                            Console.Write(' ');
+                        else
+                            Console.Write(val);
+                        Console.SetCursorPosition(pos_right.Item1 -1, pos_right.Item2);
+                        
+
+                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-1)
                         {
-                            Console.SetCursorPosition(pos_right.Item1 + 3, pos_right.Item2);
+                            //Message(pos_right.ToString());
+                            Console.SetCursorPosition(pos_right.Item1 + 2, pos_right.Item2);
                             coordinates = (coordinates.Item1 + 1, coordinates.Item2);
                         }
                         else
@@ -124,12 +202,10 @@ namespace Sudoku
 
                         MessageClear();
 
-                        int val = matrix[coordinates.Item2, coordinates.Item1];
                         (int, int) num_pos = Console.GetCursorPosition();
 
-                        if (matrix[coordinates.Item2, coordinates.Item1] != 0)
+                        if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
                             Console.Write(val);
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
@@ -137,23 +213,54 @@ namespace Sudoku
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.Beep();
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
+                            matrix[coordinates.Item2, coordinates.Item1] = (Int32.Parse(key.ToString().Substring(1)));
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
 
                         break;
 
+                    case ConsoleKey.M:
+                        menu();                
+                        break;
+
+                    case ConsoleKey.V:
+                        undoValue(pos, val);
+                        SolveBoard();
+                        break;
+
                     case ConsoleKey.X:
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Clear();
                         Environment.Exit(1);
                         break;
 
                     default:
-                        (int, int) pos = Console.GetCursorPosition();
-                        Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
+                        
+                        (int, int) new_pos = Console.GetCursorPosition();
+                        int diff = new_pos.Item1 - pos.Item1;
+
+                        if (new_pos == pos)
+                            break;
+                        else if(diff > 1)
+                        {
+                            Console.SetCursorPosition(pos.Item1, pos.Item2);
+                            Console.Write(" |");
+                            Console.SetCursorPosition(pos.Item1, pos.Item2);
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(pos.Item1, pos.Item2);
+                            if(val == 0)
+                                Console.Write(' ');
+                            else
+                                Console.Write(val);
+                            Console.SetCursorPosition(pos.Item1, pos.Item2);
+                        }
+                        
+
+                        Message("Please enter a valid value");
                         break;
                 }
                 Console.ForegroundColor = ConsoleColor.White;
@@ -171,6 +278,8 @@ namespace Sudoku
 
         static void menu(){
 
+            Console.Clear();
+            Welcome();
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
 
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play Game");
@@ -220,6 +329,15 @@ namespace Sudoku
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
 
+        static void undoValue((int, int) pos, int val){
+            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+            if(val == 0)
+                Console.Write(' ');
+            else
+                Console.Write(val);
+            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+        }
+
         /*static int CreateBoard()
         {
 
@@ -227,6 +345,8 @@ namespace Sudoku
 
         static void SolveBoard()
         {
+            matrix = old_matrix;
+
             int x = matrix.GetLength(0);
             int y = matrix.GetLength(1);
 
@@ -251,6 +371,7 @@ namespace Sudoku
             }
 
             DisplayBoard();
+            Message("Sudoku solved!!! Press the (M)enu button to return to the main menu");
         }
 
         static bool checkValue(int x, int y, int num)
@@ -306,6 +427,8 @@ namespace Sudoku
 
         static void DisplayBoard()
         {
+            Console.Clear();
+
             Console.Write(new string(' ', (Console.WindowWidth-board_len) / 2) + "___________________________");
 
             for (int i = 0; i < matrix.GetLength(0); i++)
@@ -326,12 +449,13 @@ namespace Sudoku
             }
             Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
 
+            //Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2), 1);
             //Environment.Exit(1);
         }
 
         static void DisplayOptions()
         {
-            String[] options = { "M - MENU", "S - SAVE", "X - QUIT" };
+            String[] options = { "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
 
             for(int i = 0; i < options.Length; i++)
             {
