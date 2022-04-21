@@ -7,6 +7,7 @@ namespace Sudoku
     class Program
     {
         static (int, int) coordinates = (0,0);
+        const int board_len = 27;
 
         static int[,] matrix = new int[9, 9] { { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
                                                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
@@ -42,8 +43,9 @@ namespace Sudoku
             //Console.Clear();
 
             DisplayBoard();
+            DisplayOptions();
 
-            Console.SetCursorPosition(1, 1); //First position
+            Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2), 1); //First position
 
             while(true)
             {
@@ -58,8 +60,9 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_up = Console.GetCursorPosition();
-                        if (pos_up.Item2 != 1)
+                        if (pos_up.Item2 > 1)
                         {
+                            Message(pos_up.ToString());
                             Console.SetCursorPosition(pos_up.Item1, pos_up.Item2 - 1);
                             coordinates = (coordinates.Item1, coordinates.Item2 - 1);
                         }
@@ -72,7 +75,7 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_down = Console.GetCursorPosition();
-                        if (pos_down.Item2 != 9)
+                        if (pos_down.Item2 < 9)
                         {
                             Console.SetCursorPosition(pos_down.Item1, pos_down.Item2 + 1);
                             coordinates = (coordinates.Item1, coordinates.Item2 + 1);
@@ -86,7 +89,7 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_left = Console.GetCursorPosition();
-                        if (pos_left.Item1 != 1)
+                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2))
                         {
                             Console.SetCursorPosition(pos_left.Item1 - 3, pos_left.Item2);
                             coordinates = (coordinates.Item1 - 1, coordinates.Item2);
@@ -100,7 +103,7 @@ namespace Sudoku
                         MessageClear();
 
                         (int, int) pos_right = Console.GetCursorPosition();
-                        if (pos_right.Item1 != 25)
+                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-3)
                         {
                             Console.SetCursorPosition(pos_right.Item1 + 3, pos_right.Item2);
                             coordinates = (coordinates.Item1 + 1, coordinates.Item2);
@@ -138,6 +141,12 @@ namespace Sudoku
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
                         }
 
+                        break;
+
+                    case ConsoleKey.X:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Clear();
+                        Environment.Exit(1);
                         break;
 
                     default:
@@ -297,11 +306,13 @@ namespace Sudoku
 
         static void DisplayBoard()
         {
-            Console.Write("___________________________");
+            Console.Write(new string(' ', (Console.WindowWidth-board_len) / 2) + "___________________________");
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Console.Write("\n");
+                Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2));
+
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     if (matrix[i, j] == 0)
@@ -313,9 +324,20 @@ namespace Sudoku
                 }
 
             }
-            Console.Write("\n‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
+            Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
 
             //Environment.Exit(1);
+        }
+
+        static void DisplayOptions()
+        {
+            String[] options = { "M - MENU", "S - SAVE", "X - QUIT" };
+
+            for(int i = 0; i < options.Length; i++)
+            {
+                Console.SetCursorPosition((Console.WindowWidth/2) + board_len, i+2);
+                Console.Write(options[i]);
+            }
         }
 
         static void Welcome()
