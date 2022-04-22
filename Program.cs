@@ -8,7 +8,7 @@ namespace Sudoku
 {
     class Program
     {
-        static (int, int) coordinates = (0,0);
+        static (int, int) coordinates = (0, 0);
         const int board_len = 37;
         static List<Move> moves = new List<Move>();
 
@@ -50,24 +50,25 @@ namespace Sudoku
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.ForegroundColor = ConsoleColor.White;
             //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-            Console.SetWindowSize(170,41);
+            Console.SetWindowSize(170, 41);
 
 
             menu();
 
-            
+
 
         }
 
-        static void menu(String msg = ""){
+        static void menu(String msg = "")
+        {
 
-            
+
             Console.Clear();
             Welcome();
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
 
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play Game");
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Solve board");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play New Game");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Load Game");
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. How to play");
 
             Message(msg, 35);
@@ -78,16 +79,17 @@ namespace Sudoku
 
             int option = Console.Read();
 
-            switch(option){
+            switch (option)
+            {
                 case '1':
                     Console.Clear();
                     Game();
                     //Console.WriteLine("Option to play game");
                     break;
-                
+
                 case '2':
                     Console.Clear();
-                    //Sudoku();
+                    LoadGame();
                     //Console.WriteLine("Option to solve board");
                     break;
 
@@ -103,13 +105,14 @@ namespace Sudoku
         }
 
 
-        static void Game(){
+        static void Game()
+        {
             DisplayBoard();
             DisplayOptions();
 
-            Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2)+1, 1); //First position
+            Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2) + 1, 1); //First position
 
-            while(true)
+            while (true)
             {
                 (int, int) pos = Console.GetCursorPosition();
                 int val = matrix[coordinates.Item2, coordinates.Item1];
@@ -126,9 +129,9 @@ namespace Sudoku
                 else{
                     key = Console.ReadKey(true).Key;
                 }*/
-                    
-                
-                
+
+
+
 
                 switch (key)
                 {
@@ -142,16 +145,16 @@ namespace Sudoku
                         The following few lines of code are to couteract it. Similar code is also present on the cases for the 
                         other arrow keys.
                         */
-                        
+
                         (int, int) pos_up = Console.GetCursorPosition();
 
-                        Console.SetCursorPosition(pos_up.Item1 -1, pos_up.Item2);
-                        if(val == 0)
+                        Console.SetCursorPosition(pos_up.Item1 - 1, pos_up.Item2);
+                        if (val == 0)
                             Console.Write(' ');
                         else
                             Console.Write(val);
-                        Console.SetCursorPosition(pos_up.Item1 -1, pos_up.Item2);
-                        
+                        Console.SetCursorPosition(pos_up.Item1 - 1, pos_up.Item2);
+
                         if (pos_up.Item2 > 1)
                         {
                             //Message(pos_up.ToString());
@@ -169,13 +172,13 @@ namespace Sudoku
                         (int, int) pos_down = Console.GetCursorPosition();
 
                         //Counteract termial behaviour
-                        Console.SetCursorPosition(pos_down.Item1 -1, pos_down.Item2);
-                        if(val == 0)
+                        Console.SetCursorPosition(pos_down.Item1 - 1, pos_down.Item2);
+                        if (val == 0)
                             Console.Write(' ');
                         else
                             Console.Write(val);
-                        Console.SetCursorPosition(pos_down.Item1 -1, pos_down.Item2);
-                        
+                        Console.SetCursorPosition(pos_down.Item1 - 1, pos_down.Item2);
+
 
                         if (pos_down.Item2 < 17)
                         {
@@ -188,21 +191,21 @@ namespace Sudoku
                         break;
 
                     case ConsoleKey.LeftArrow:
-                        
+
                         MessageClear();
 
                         (int, int) pos_left = Console.GetCursorPosition();
 
                         //Counteract termial behaviour
-                        Console.SetCursorPosition(pos_left.Item1 -1, pos_left.Item2);
-                        if(val == 0)
+                        Console.SetCursorPosition(pos_left.Item1 - 1, pos_left.Item2);
+                        if (val == 0)
                             Console.Write(' ');
                         else
                             Console.Write(val);
-                        Console.SetCursorPosition(pos_left.Item1 -1, pos_left.Item2);
-                    
-                        
-                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2)+2)
+                        Console.SetCursorPosition(pos_left.Item1 - 1, pos_left.Item2);
+
+
+                        if (pos_left.Item1 > (Console.WindowWidth / 2) - (board_len / 2) + 2)
                         {
                             //Message(pos_left.ToString());
                             Console.SetCursorPosition(pos_left.Item1 - 5, pos_left.Item2);
@@ -219,15 +222,15 @@ namespace Sudoku
                         (int, int) pos_right = Console.GetCursorPosition();
 
                         //Counteract termial behaviour
-                        Console.SetCursorPosition(pos_right.Item1 -1, pos_right.Item2);
-                        if(val == 0)
+                        Console.SetCursorPosition(pos_right.Item1 - 1, pos_right.Item2);
+                        if (val == 0)
                             Console.Write(' ');
                         else
                             Console.Write(val);
-                        Console.SetCursorPosition(pos_right.Item1 -1, pos_right.Item2);
-                        
+                        Console.SetCursorPosition(pos_right.Item1 - 1, pos_right.Item2);
 
-                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-2)
+
+                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2) - 2)
                         {
                             //Message(pos_right.ToString());
                             Console.SetCursorPosition(pos_right.Item1 + 3, pos_right.Item2);
@@ -264,7 +267,7 @@ namespace Sudoku
                             Console.ForegroundColor = ConsoleColor.Blue;
                             Console.Beep();
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
-                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], num_pos.Item1-1, num_pos.Item2, coordinates.Item1, coordinates.Item2));
+                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], num_pos.Item1 - 1, num_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = (Int32.Parse(key.ToString().Substring(1)));
                             Console.ForegroundColor = ConsoleColor.White;
                         }
@@ -281,12 +284,13 @@ namespace Sudoku
                             Replace(val, d_pos);
                             Message("Cannot change pre-defined values");
                         }
-                        else{
+                        else
+                        {
                             //Replace number with empty space and set value to 0 in matrix
-                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            Console.SetCursorPosition(d_pos.Item1 - 1, d_pos.Item2);
                             Console.Write(" ");
-                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
-                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], d_pos.Item1-1, d_pos.Item2, coordinates.Item1, coordinates.Item2));
+                            Console.SetCursorPosition(d_pos.Item1 - 1, d_pos.Item2);
+                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], d_pos.Item1 - 1, d_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = 0;
                         }
                         break;
@@ -297,31 +301,64 @@ namespace Sudoku
                         //Delete character entered
                         Replace(val, u_pos);
 
-                        //Get last move and delete from list
-                        if(!moves.Any()){
+                        //Check if any move has been made
+                        if (!moves.Any())
+                        {
                             Message("No moves to undo!");
                             break;
                         }
 
-                        Move move = moves[moves.Count-1];
-                        moves.Remove(moves[moves.Count-1]);
+                        //Get last move and delete from list
+                        Move move = moves[moves.Count - 1];
+                        moves.Remove(moves[moves.Count - 1]);
 
                         //Undo move
                         Console.SetCursorPosition(move.x, move.y);
-                        Replace(move.val, (move.x+1, move.y));
+                        Replace(move.val, (move.x + 1, move.y));
                         coordinates = (move.matrix_x, move.matrix_y);
                         matrix[coordinates.Item2, coordinates.Item1] = move.val;
+                        break;
 
+                    case ConsoleKey.S:
+                        
+                        (int, int) s_pos = Console.GetCursorPosition();
+                        //Delete character entered
+                        Replace(val, s_pos);
 
-                        //Stops user from changing pre-defined values
-                        /*if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
-                        {
-                            Replace(val, u_pos);
+                        if(!File.Exists("boards.csv")){
+                            File.Create("boards.csv");
                         }
-                        else{
-                            
-                        }*/
 
+                        using(StreamWriter sw = new StreamWriter("boards.csv", true)){
+                            
+                            for(int i = 0; i < matrix.GetLength(1); i++){
+                                for(int j = 0; j < matrix.GetLength(0); j++){
+
+                                    if(j%8 != 0 || j == 0)
+                                        sw.Write(matrix[i, j] + ",");
+                                    else
+                                        sw.Write(matrix[i, j]);
+
+                                }
+                                sw.Write("\n");
+                            }
+
+                            sw.Write("\n\n");
+
+                            for(int i = 0; i < old_matrix.GetLength(1); i++){
+                                for(int j = 0; j < old_matrix.GetLength(0); j++){
+                                    
+                                    if(j%8 != 0 || j == 0)
+                                        sw.Write(matrix[i, j] + ",");
+                                    else
+                                        sw.Write(matrix[i, j]);
+
+                                }
+                                sw.Write("\n");
+                            }
+
+                            sw.Write("\n\n");
+                        }
                         
                         break;
 
@@ -340,13 +377,13 @@ namespace Sudoku
                         break;
 
                     default:
-                        
+
                         (int, int) new_pos = Console.GetCursorPosition();
                         int diff = new_pos.Item1 - pos.Item1;
 
                         if (new_pos == pos)
                             break;
-                        else if(diff > 1)
+                        else if (diff > 1)
                         {
                             Console.SetCursorPosition(pos.Item1, pos.Item2);
                             Console.Write(" |");
@@ -355,13 +392,13 @@ namespace Sudoku
                         else
                         {
                             Console.SetCursorPosition(pos.Item1, pos.Item2);
-                            if(val == 0)
+                            if (val == 0)
                                 Console.Write(' ');
                             else
                                 Console.Write(val);
                             Console.SetCursorPosition(pos.Item1, pos.Item2);
                         }
-                        
+
 
                         Message("Please enter a valid value");
                         break;
@@ -396,30 +433,72 @@ namespace Sudoku
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
 
-        static void undoValue((int, int) pos, int val){
-            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
-            if(val == 0)
+        static void undoValue((int, int) pos, int val)
+        {
+            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
+            if (val == 0)
                 Console.Write(' ');
             else
                 Console.Write(val);
-            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
         }
 
-        static void Replace(int val, (int,int) pos){
-            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
-            if(val == 0){
+        static void Replace(int val, (int, int) pos)
+        {
+            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
+            if (val == 0)
+            {
                 Console.Write(' ');
             }
-            else{
+            else
+            {
                 Console.Write(val);
             }
-            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
         }
 
         /*static int CreateBoard()
         {
 
         }*/
+
+        static void LoadGame(){
+
+            int[,]temp_matrix = new int[9, 9] { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            };
+
+            if(!File.Exists("boards.csv")){
+                menu("No games have been played");
+            }
+            
+            Console.Clear();
+
+            using(StreamReader sr = new StreamReader("boards.csv")){
+                
+                for(int i = 0; i < matrix.GetLength(1); i++){
+                    
+                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);
+                    
+                    foreach(int j in values){
+                        temp_matrix[j, i] = values[j];
+                    }
+
+                }
+            }
+
+            matrix = temp_matrix;
+
+            RulesMenu();
+
+        }
 
         static void SolveBoard()
         {
@@ -428,15 +507,15 @@ namespace Sudoku
             int x = matrix.GetLength(0);
             int y = matrix.GetLength(1);
 
-            for(int i = 0; i < x; i++)
+            for (int i = 0; i < x; i++)
             {
                 for (int j = 0; j < y; j++)
                 {
-                    if(matrix[i,j] == 0)
+                    if (matrix[i, j] == 0)
                     {
                         for (int num = 1; num < 10; num++)
                         {
-                            if(checkValue(i, j, num))
+                            if (checkValue(i, j, num))
                             {
                                 matrix[i, j] = num;
                                 SolveBoard();
@@ -457,7 +536,7 @@ namespace Sudoku
             int hor = matrix.GetLength(0);
             int ver = matrix.GetLength(1);
 
-            for(int i = 0; i < hor; i++)
+            for (int i = 0; i < hor; i++)
             {
                 if (matrix[x, i] == num)
                     return false;
@@ -471,11 +550,11 @@ namespace Sudoku
             int x0 = (x / 3) * 3;
             int y0 = (y / 3) * 3;
 
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    if(matrix[x0+i,y0+j] == num)
+                    if (matrix[x0 + i, y0 + j] == num)
                     {
                         return false;
                     }
@@ -495,7 +574,7 @@ namespace Sudoku
             {
                 for (int j = 0; j < y; j++)
                 {
-                    if (matrix[i,j] == 0)
+                    if (matrix[i, j] == 0)
                         return false;
                 }
             }
@@ -503,11 +582,11 @@ namespace Sudoku
             return true;
         }
 
-        static void DisplayBoard()
+        static void DisplayBoard(char c = 'c')
         {
             Console.Clear();
 
-            Console.Write(new string(' ', (Console.WindowWidth-board_len) / 2) + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
+            Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2) + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
@@ -518,28 +597,29 @@ namespace Sudoku
                 {
                     if (matrix[i, j] == 0)
                     {
-                        if(j%3 == 2)
+                        if (j % 3 == 2)
                             Console.Write("   ║");
                         else
                             Console.Write("   │");
                     }
-                    else{
-                        if(j%3 == 2)
+                    else
+                    {
+                        if (j % 3 == 2)
                             Console.Write(" " + matrix[i, j] + " ║");
                         else
                             Console.Write(" " + matrix[i, j] + " │");
                     }
-                        
+
                 }
-                int ii = i+1;
-                if(ii < matrix.GetLength(0) && i%3 == 2)
+                int ii = i + 1;
+                if (ii < matrix.GetLength(0) && i % 3 == 2)
                     Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣");
-                else if(ii < matrix.GetLength(0))
+                else if (ii < matrix.GetLength(0))
                     Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢");
-                
+
 
             }
-            Console.Write("\n" + new string(' ', (Console.WindowWidth-board_len) / 2) + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
+            Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
 
         }
 
@@ -547,9 +627,9 @@ namespace Sudoku
         {
             String[] options = { "D - DELETE", "U - UNDO", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
 
-            for(int i = 0; i < options.Length; i++)
+            for (int i = 0; i < options.Length; i++)
             {
-                Console.SetCursorPosition((Console.WindowWidth/2) + board_len, i+2);
+                Console.SetCursorPosition((Console.WindowWidth / 2) + board_len, i + 2);
                 Console.Write(options[i]);
             }
         }
@@ -557,7 +637,8 @@ namespace Sudoku
         /*
         * Method to display rules to user
         */
-        static void Rules(){
+        static void Rules()
+        {
 
             //Clear console
             Console.Clear();
@@ -567,9 +648,10 @@ namespace Sudoku
 
             //Deleting comment
             text[0] = "";
-            
+
             //Display rules
-            foreach(String line in text){
+            foreach (String line in text)
+            {
                 Console.WriteLine(' ' + line);
             }
         }
@@ -577,22 +659,26 @@ namespace Sudoku
         /*
         * 
         */
-        static void RulesMenu(){
+        static void RulesMenu()
+        {
             Console.WriteLine("\n\n Click (M)enu to return to back menu or (X) to quit program");
 
             var key = Console.ReadKey().Key;
 
-            while(key != ConsoleKey.M || key != ConsoleKey.X){
+            while (key != ConsoleKey.M || key != ConsoleKey.X)
+            {
 
                 key = Console.ReadKey().Key;
 
-                if(key == ConsoleKey.M)
+                if (key == ConsoleKey.M)
                     menu();
-                else if(key == ConsoleKey.X){
+                else if (key == ConsoleKey.X)
+                {
                     Console.Clear();
                     Environment.Exit(1);
                 }
-                else{
+                else
+                {
                     Message("Invalid option, please try again", 45);
                 }
             }
