@@ -10,9 +10,7 @@ namespace Sudoku
     {
         static (int, int) coordinates = (0,0);
         const int board_len = 37;
-
-        //static int LargestWindowWidth = 170;
-        //static int LargestWindowHeight = 40;
+        static List<Move> moves = new List<Move>();
 
         static int[,] matrix = new int[9, 9] { { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
                                                { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
@@ -266,6 +264,7 @@ namespace Sudoku
                             Console.ForegroundColor = ConsoleColor.Blue;
                             Console.Beep();
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
+                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], num_pos.Item1-1, num_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = (Int32.Parse(key.ToString().Substring(1)));
                             Console.ForegroundColor = ConsoleColor.White;
                         }
@@ -279,9 +278,7 @@ namespace Sudoku
                         //Stops user from changing pre-defined values
                         if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
                         {
-                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
-                            Console.Write(val);
-                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            Replace(val, d_pos);
                             Message("Cannot change pre-defined values");
                         }
                         else{
@@ -289,11 +286,43 @@ namespace Sudoku
                             Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
                             Console.Write(" ");
                             Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], d_pos.Item1-1, d_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = 0;
                         }
+                        break;
+
+                    case ConsoleKey.U:
+
+                        (int, int) u_pos = Console.GetCursorPosition();
+                        //Delete character entered
+                        Replace(val, u_pos);
+
+                        //Get last move and delete from list
+                        if(!moves.Any()){
+                            Message("No moves to undo!");
+                            break;
+                        }
+
+                        Move move = moves[moves.Count-1];
+                        moves.Remove(moves[moves.Count-1]);
+
+                        //Undo move
+                        Console.SetCursorPosition(move.x, move.y);
+                        Replace(move.val, (move.x+1, move.y));
+                        coordinates = (move.matrix_x, move.matrix_y);
+                        matrix[coordinates.Item2, coordinates.Item1] = move.val;
+
+
+                        //Stops user from changing pre-defined values
+                        /*if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
+                        {
+                            Replace(val, u_pos);
+                        }
+                        else{
+                            
+                        }*/
 
                         
-
                         break;
 
                     case ConsoleKey.M:
@@ -373,6 +402,17 @@ namespace Sudoku
                 Console.Write(' ');
             else
                 Console.Write(val);
+            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+        }
+
+        static void Replace(int val, (int,int) pos){
+            Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
+            if(val == 0){
+                Console.Write(' ');
+            }
+            else{
+                Console.Write(val);
+            }
             Console.SetCursorPosition(pos.Item1 -1, pos.Item2);
         }
 
@@ -505,7 +545,7 @@ namespace Sudoku
 
         static void DisplayOptions()
         {
-            String[] options = { "D - DELETE", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
+            String[] options = { "D - DELETE", "U - UNDO", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
 
             for(int i = 0; i < options.Length; i++)
             {
