@@ -7,7 +7,7 @@ namespace Sudoku
     class Program
     {
         static (int, int) coordinates = (0,0);
-        const int board_len = 27;
+        const int board_len = 37;
 
         //static int LargestWindowWidth = 170;
         //static int LargestWindowHeight = 40;
@@ -60,7 +60,7 @@ namespace Sudoku
             DisplayBoard();
             DisplayOptions();
 
-            Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2), 1); //First position
+            Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2)+1, 1); //First position
 
             while(true)
             {
@@ -108,7 +108,7 @@ namespace Sudoku
                         if (pos_up.Item2 > 1)
                         {
                             //Message(pos_up.ToString());
-                            Console.SetCursorPosition(pos_up.Item1 - 1, pos_up.Item2 - 1);
+                            Console.SetCursorPosition(pos_up.Item1 - 1, pos_up.Item2 - 2);
                             coordinates = (coordinates.Item1, coordinates.Item2 - 1);
                         }
                         else
@@ -130,10 +130,10 @@ namespace Sudoku
                         Console.SetCursorPosition(pos_down.Item1 -1, pos_down.Item2);
                         
 
-                        if (pos_down.Item2 < 9)
+                        if (pos_down.Item2 < 17)
                         {
                             //Message(pos_down.ToString());
-                            Console.SetCursorPosition(pos_down.Item1 - 1, pos_down.Item2 + 1);
+                            Console.SetCursorPosition(pos_down.Item1 - 1, pos_down.Item2 + 2);
                             coordinates = (coordinates.Item1, coordinates.Item2 + 1);
                         }
                         else
@@ -155,10 +155,10 @@ namespace Sudoku
                         Console.SetCursorPosition(pos_left.Item1 -1, pos_left.Item2);
                     
                         
-                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2)+1)
+                        if (pos_left.Item1 > (Console.WindowWidth/2) - (board_len/2)+2)
                         {
                             //Message(pos_left.ToString());
-                            Console.SetCursorPosition(pos_left.Item1 - 4, pos_left.Item2);
+                            Console.SetCursorPosition(pos_left.Item1 - 5, pos_left.Item2);
                             coordinates = (coordinates.Item1 - 1, coordinates.Item2);
                         }
                         else
@@ -180,10 +180,10 @@ namespace Sudoku
                         Console.SetCursorPosition(pos_right.Item1 -1, pos_right.Item2);
                         
 
-                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-1)
+                        if (pos_right.Item1 < (Console.WindowWidth / 2) + (board_len / 2)-2)
                         {
                             //Message(pos_right.ToString());
-                            Console.SetCursorPosition(pos_right.Item1 + 2, pos_right.Item2);
+                            Console.SetCursorPosition(pos_right.Item1 + 3, pos_right.Item2);
                             coordinates = (coordinates.Item1 + 1, coordinates.Item2);
                         }
                         else
@@ -316,7 +316,7 @@ namespace Sudoku
         {
             Console.ForegroundColor = ConsoleColor.White;
             (int, int) pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(0, 12);
+            Console.SetCursorPosition(0, 20);
             Console.WriteLine(msg + new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
@@ -324,7 +324,7 @@ namespace Sudoku
         static void MessageClear()
         {
             (int, int) pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(0, 12);
+            Console.SetCursorPosition(0, 20);
             Console.WriteLine(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
@@ -429,28 +429,40 @@ namespace Sudoku
         {
             Console.Clear();
 
-            Console.Write(new string(' ', (Console.WindowWidth-board_len) / 2) + "___________________________");
+            Console.Write(new string(' ', (Console.WindowWidth-board_len) / 2) + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
 
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 Console.Write("\n");
-                Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2));
+                Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2) + "║");
 
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     if (matrix[i, j] == 0)
                     {
-                        Console.Write("| |");
+                        if(j%3 == 2)
+                            Console.Write("   ║");
+                        else
+                            Console.Write("   │");
                     }
-                    else
-                        Console.Write("|" + matrix[i, j] + "|");
+                    else{
+                        if(j%3 == 2)
+                            Console.Write(" " + matrix[i, j] + " ║");
+                        else
+                            Console.Write(" " + matrix[i, j] + " │");
+                    }
+                        
                 }
+                int ii = i+1;
+                if(ii < matrix.GetLength(0) && i%3 == 2)
+                    Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣");
+                else if(ii < matrix.GetLength(0))
+                    Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢");
+                
 
             }
-            Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
+            Console.Write("\n" + new string(' ', (Console.WindowWidth-board_len) / 2) + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
 
-            //Console.SetCursorPosition((Console.WindowWidth / 2) - (board_len / 2), 1);
-            //Environment.Exit(1);
         }
 
         static void DisplayOptions()
