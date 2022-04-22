@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Sudoku
 {
@@ -55,8 +57,55 @@ namespace Sudoku
 
             menu();
 
-            //Console.Clear();
+            
 
+        }
+
+        static void menu(String msg = ""){
+
+            
+            Console.Clear();
+            Welcome();
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
+
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play Game");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Solve board");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. How to play");
+
+            Message(msg, 35);
+            msg = null;
+
+            int top = Console.CursorTop;
+            Console.SetCursorPosition(Console.WindowWidth / 3, top);
+
+            int option = Console.Read();
+
+            switch(option){
+                case '1':
+                    Console.Clear();
+                    Game();
+                    //Console.WriteLine("Option to play game");
+                    break;
+                
+                case '2':
+                    Console.Clear();
+                    //Sudoku();
+                    //Console.WriteLine("Option to solve board");
+                    break;
+
+                case '3':
+                    Rules();
+                    RulesMenu();
+                    break;
+
+                default:
+                    menu("Invalid option, enter a valid one");
+                    break;
+            }
+        }
+
+
+        static void Game(){
             DisplayBoard();
             DisplayOptions();
 
@@ -69,7 +118,7 @@ namespace Sudoku
 
                 var key = Console.ReadKey().Key;
 
-/*
+                /*
                 List<ConsoleKey> forbidden_keys = new List<ConsoleKey>();
                 forbidden_keys.Add(ConsoleKey.Tab);
                 
@@ -204,6 +253,7 @@ namespace Sudoku
 
                         (int, int) num_pos = Console.GetCursorPosition();
 
+                        //Stops user from changing pre-defined values
                         if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
                         {
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
@@ -222,8 +272,32 @@ namespace Sudoku
 
                         break;
 
+                    case ConsoleKey.D:
+
+                        (int, int) d_pos = Console.GetCursorPosition();
+
+                        //Stops user from changing pre-defined values
+                        if (old_matrix[coordinates.Item2, coordinates.Item1] != 0)
+                        {
+                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            Console.Write(val);
+                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            Message("Cannot change pre-defined values");
+                        }
+                        else{
+                            //Replace number with empty space and set value to 0 in matrix
+                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            Console.Write(" ");
+                            Console.SetCursorPosition(d_pos.Item1 -1, d_pos.Item2);
+                            matrix[coordinates.Item2, coordinates.Item1] = 0;
+                        }
+
+                        
+
+                        break;
+
                     case ConsoleKey.M:
-                        menu();                
+                        menu("OVVERWRITE That duking stoopid message pls");
                         break;
 
                     case ConsoleKey.V:
@@ -273,58 +347,22 @@ namespace Sudoku
                 Message(coo);*/
 
             } //while (!Console.ReadKey().Equals('x'));
-
         }
 
-        static void menu(){
 
-            Console.Clear();
-            Welcome();
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
-
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play Game");
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Solve board");
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. How to play");
-
-            int top = Console.CursorTop;
-            Console.SetCursorPosition(Console.WindowWidth / 3, top);
-
-            int option = Console.Read();
-
-            switch(option){
-                case '1':
-                    Console.Clear();
-                    //Sudoku();
-                    //Console.WriteLine("Option to play game");
-                    break;
-                
-                case '2':
-                    Console.Clear();
-                    //Sudoku();
-                    //Console.WriteLine("Option to solve board");
-                    break;
-
-                default:
-                    Console.Clear();
-                    //Sudoku();
-                    //Console.WriteLine("Please enter a valid option");
-                    break;
-            }
-        }
-
-        static void Message(String msg)
+        static void Message(String msg, int top = 20)
         {
             Console.ForegroundColor = ConsoleColor.White;
             (int, int) pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(0, 20);
-            Console.WriteLine(msg + new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, top);
+            Console.WriteLine(msg + new string(' ', Console.WindowWidth - msg.Length));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
 
-        static void MessageClear()
+        static void MessageClear(int top = 20)
         {
             (int, int) pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(0, 20);
+            Console.SetCursorPosition(0, top);
             Console.WriteLine(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
@@ -467,12 +505,56 @@ namespace Sudoku
 
         static void DisplayOptions()
         {
-            String[] options = { "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
+            String[] options = { "D - DELETE", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
 
             for(int i = 0; i < options.Length; i++)
             {
                 Console.SetCursorPosition((Console.WindowWidth/2) + board_len, i+2);
                 Console.Write(options[i]);
+            }
+        }
+
+        /*
+        * Method to display rules to user
+        */
+        static void Rules(){
+
+            //Clear console
+            Console.Clear();
+
+            //Get all text from file
+            String[] text = File.ReadAllLines("rules.txt");
+
+            //Deleting comment
+            text[0] = "";
+            
+            //Display rules
+            foreach(String line in text){
+                Console.WriteLine(' ' + line);
+            }
+        }
+
+        /*
+        * 
+        */
+        static void RulesMenu(){
+            Console.WriteLine("\n\n Click (M)enu to return to back menu or (X) to quit program");
+
+            var key = Console.ReadKey().Key;
+
+            while(key != ConsoleKey.M || key != ConsoleKey.X){
+
+                key = Console.ReadKey().Key;
+
+                if(key == ConsoleKey.M)
+                    menu();
+                else if(key == ConsoleKey.X){
+                    Console.Clear();
+                    Environment.Exit(1);
+                }
+                else{
+                    Message("Invalid option, please try again", 45);
+                }
             }
         }
 
