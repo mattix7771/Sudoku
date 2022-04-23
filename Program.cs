@@ -349,9 +349,9 @@ namespace Sudoku
                                 for(int j = 0; j < old_matrix.GetLength(0); j++){
                                     
                                     if(j%8 != 0 || j == 0)
-                                        sw.Write(matrix[i, j] + ",");
+                                        sw.Write(old_matrix[i, j] + ",");
                                     else
-                                        sw.Write(matrix[i, j]);
+                                        sw.Write(old_matrix[i, j]);
 
                                 }
                                 sw.Write("\n");
@@ -473,19 +473,73 @@ namespace Sudoku
             
             Console.Clear();
 
-            using(StreamReader sr = new StreamReader("boards.csv")){
+            String dir = "boards.csv";
+
+            using(StreamReader sr = new StreamReader(dir)){
                 
-                String[] lines = File.ReadAllLines("boards.csv");
+                int line_count = File.ReadAllLines(dir).Count();    //Amount of lines in csv
+                int num_saved_games = line_count/20;                //Amount of saved games
+                String[] lines = File.ReadAllLines(dir);            //All the contents of the file
 
                 //Export matrix from csv
-                for(int i = 0; i < matrix.GetLength(1); i++){
+                for(int current_board = 0; current_board < num_saved_games; current_board++){      //Board being procesed
+
+                    if(current_board != 0){
+                        for(int i = 0; i < 11; i++){
+                            sr.ReadLine();
+                        }
+                    }  
+
+                    for(int i = 0; i < matrix.GetLength(1); i++){
                     
-                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);
+                        int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
                     
-                    for(int j = 0; j < matrix.GetLength(0); j++){
-                        matrix[i, j] = values[j];
+                        for(int j = 0; j < matrix.GetLength(0); j++){
+                            matrix[i, j] = values[j];
+                        }
                     }
+
+                    if(current_board%3 == 0)
+                            DisplayBoard('x', 0, (current_board-current_board%3)/3);
+                        else if(current_board%3 == 1)
+                            DisplayBoard('x', 1, (current_board-current_board%3)/3);
+                        else
+                            DisplayBoard('x', 2, (current_board-current_board%3)/3);
+
+                    /*if(current_board == 0){
+                        DisplayBoard('x', 0, 0);
+                    }
+                    if(current_board%3 == 0){
+                        if(current_board%3 == 0)
+                            DisplayBoard('x', 0, 0);
+                        else if(current_board%3 == 1)
+                            DisplayBoard('x', 1, 0);
+                        else
+                            DisplayBoard('x', 2, 0);
+                    }
+                    else if(current_board%3 == 1){
+                        if(current_board%3 == 0)
+                            DisplayBoard('x', 0, 1);
+                        else if(current_board%3 == 1)
+                            DisplayBoard('x', 1, 1);
+                        else
+                            DisplayBoard('x', 2, 1);
+                    }
+                    else{
+                        if(current_board%3 == 0)
+                            DisplayBoard('x', 0, 2);
+                        else if(current_board%3 == 1)
+                            DisplayBoard('x', 1, 2);
+                        else
+                            DisplayBoard('x', 2, 2);
+                    }*/
+
+
+
+                    Thread.Sleep(500);
+                    
                 }
+                
 
                 //Delete exported matrix
                 /*File.WriteAllLines("boards.csv", lines.Skip(10).ToArray());
@@ -502,7 +556,7 @@ namespace Sudoku
                 
             }
 
-            RulesMenu();
+            //RulesMenu();
 
         }
 
@@ -588,45 +642,100 @@ namespace Sudoku
             return true;
         }
 
-        static void DisplayBoard(char c = 'c')
+        static void DisplayBoard(char margin = 'c', int x_pos = 0, int y_pos = 0)
         {
-            Console.Clear();
+            if(margin == 'c'){
+                Console.Clear();
 
-            Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2) + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
+                String left_margin = new string(' ', (Console.WindowWidth - board_len) / 2);
 
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                Console.Write("\n");
-                Console.Write(new string(' ', (Console.WindowWidth - board_len) / 2) + "║");
+                Console.Write(left_margin + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
 
-                for (int j = 0; j < matrix.GetLength(1); j++)
+                for (int i = 0; i < matrix.GetLength(0); i++)
                 {
-                    if (matrix[i, j] == 0)
+                    Console.Write("\n");
+
+                    Console.Write(left_margin + "║");
+
+                    for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        if (j % 3 == 2)
-                            Console.Write("   ║");
+                        if (matrix[i, j] == 0)
+                        {
+                            if (j % 3 == 2)
+                                Console.Write("   ║");
+                            else
+                                Console.Write("   │");
+                        }
                         else
-                            Console.Write("   │");
+                        {
+                            if (j % 3 == 2)
+                                Console.Write(" " + matrix[i, j] + " ║");
+                            else
+                                Console.Write(" " + matrix[i, j] + " │");
+                        }
+
                     }
-                    else
+                    int ii = i + 1;
+                    if (ii < matrix.GetLength(0) && i % 3 == 2)
+                        Console.Write("\n" + left_margin + "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣");
+                    else if (ii < matrix.GetLength(0))
+                        Console.Write("\n" + left_margin + "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢");
+
+
+                    }
+                Console.Write("\n" + left_margin + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
+            }
+            else{
+
+                String left_margin = new string(' ', (Console.WindowWidth/3 - board_len - 5));
+
+                Console.SetCursorPosition((left_margin.Length*x_pos)+(board_len*x_pos), 1 + 21*y_pos);
+
+                Console.Write(left_margin + "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗");
+                
+                for (int i = 0; i < matrix.GetLength(0); i++)
+                {
+                    Console.SetCursorPosition((left_margin.Length*x_pos)+(board_len*x_pos), (21*y_pos) + i*2+2);
+
+                    Console.Write(left_margin + "║");
+
+                    for (int j = 0; j < matrix.GetLength(1); j++)
                     {
-                        if (j % 3 == 2)
-                            Console.Write(" " + matrix[i, j] + " ║");
+                        if (matrix[i, j] == 0)
+                        {
+                            if (j % 3 == 2)
+                                Console.Write("   ║");
+                            else
+                                Console.Write("   │");
+                        }
                         else
-                            Console.Write(" " + matrix[i, j] + " │");
+                        {
+                            if (j % 3 == 2)
+                                Console.Write(" " + matrix[i, j] + " ║");
+                            else
+                                Console.Write(" " + matrix[i, j] + " │");
+                        }
+
+                    }
+                    
+                    int ii = i + 1;
+                    if (ii < matrix.GetLength(0) && i % 3 == 2){
+                        
+                        Console.SetCursorPosition((left_margin.Length*x_pos)+(board_len*x_pos), (21*y_pos) + i*2+3);
+                        Console.Write(left_margin + "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣");
+                    }
+                        
+                    else if (ii < matrix.GetLength(0)){
+
+                        Console.SetCursorPosition((left_margin.Length*x_pos)+(board_len*x_pos), (21*y_pos) + i*2+3);
+                        Console.Write(left_margin + "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢");
                     }
 
                 }
-                int ii = i + 1;
-                if (ii < matrix.GetLength(0) && i % 3 == 2)
-                    Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣");
-                else if (ii < matrix.GetLength(0))
-                    Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢");
 
-
+                Console.SetCursorPosition((left_margin.Length*x_pos)+(board_len*x_pos), (21*y_pos) + 19);
+                Console.Write(left_margin + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
             }
-            Console.Write("\n" + new string(' ', (Console.WindowWidth - board_len) / 2) + "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝");
-
         }
 
         static void DisplayOptions()
@@ -673,9 +782,6 @@ namespace Sudoku
 
             while (key != ConsoleKey.M || key != ConsoleKey.X)
             {
-
-                key = Console.ReadKey().Key;
-
                 if (key == ConsoleKey.M)
                     menu();
                 else if (key == ConsoleKey.X)
