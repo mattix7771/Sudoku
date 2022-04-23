@@ -343,7 +343,7 @@ namespace Sudoku
                                 sw.Write("\n");
                             }
 
-                            sw.Write("\n\n");
+                            sw.Write("\n");
 
                             for(int i = 0; i < old_matrix.GetLength(1); i++){
                                 for(int j = 0; j < old_matrix.GetLength(0); j++){
@@ -357,8 +357,10 @@ namespace Sudoku
                                 sw.Write("\n");
                             }
 
-                            sw.Write("\n\n");
+                            sw.Write("\n");
+                            sw.Close();
                         }
+                        
                         
                         break;
 
@@ -464,17 +466,7 @@ namespace Sudoku
 
         static void LoadGame(){
 
-            int[,]temp_matrix = new int[9, 9] { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-            };
-
+            //Check if file exists
             if(!File.Exists("boards.csv")){
                 menu("No games have been played");
             }
@@ -483,18 +475,32 @@ namespace Sudoku
 
             using(StreamReader sr = new StreamReader("boards.csv")){
                 
+                String[] lines = File.ReadAllLines("boards.csv");
+
+                //Export matrix from csv
                 for(int i = 0; i < matrix.GetLength(1); i++){
                     
                     int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);
                     
-                    foreach(int j in values){
-                        temp_matrix[j, i] = values[j];
+                    for(int j = 0; j < matrix.GetLength(0); j++){
+                        matrix[i, j] = values[j];
                     }
-
                 }
-            }
 
-            matrix = temp_matrix;
+                //Delete exported matrix
+                /*File.WriteAllLines("boards.csv", lines.Skip(10).ToArray());
+
+                //Export old_matrix from csv
+                for(int i = 0; i < matrix.GetLength(1); i++){
+                    
+                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);
+                    
+                    for(int j = 0; j < matrix.GetLength(0); j++){
+                        matrix[i, j] = values[j];
+                    }
+                }*/
+                
+            }
 
             RulesMenu();
 
