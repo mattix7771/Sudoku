@@ -475,10 +475,12 @@ namespace Sudoku
 
             String dir = "boards.csv";
 
+            int num_saved_games = 0;
+
             using(StreamReader sr = new StreamReader(dir)){
                 
                 int line_count = File.ReadAllLines(dir).Count();    //Amount of lines in csv
-                int num_saved_games = line_count/20;                //Amount of saved games
+                num_saved_games = line_count/20;                    //Amount of saved games
                 String[] lines = File.ReadAllLines(dir);            //All the contents of the file
 
                 //Export matrix from csv
@@ -500,45 +502,15 @@ namespace Sudoku
                     }
 
                     if(current_board%3 == 0)
-                            DisplayBoard('x', 0, (current_board-current_board%3)/3);
-                        else if(current_board%3 == 1)
-                            DisplayBoard('x', 1, (current_board-current_board%3)/3);
-                        else
-                            DisplayBoard('x', 2, (current_board-current_board%3)/3);
-
-                    /*if(current_board == 0){
-                        DisplayBoard('x', 0, 0);
-                    }
-                    if(current_board%3 == 0){
-                        if(current_board%3 == 0)
-                            DisplayBoard('x', 0, 0);
-                        else if(current_board%3 == 1)
-                            DisplayBoard('x', 1, 0);
-                        else
-                            DisplayBoard('x', 2, 0);
-                    }
-                    else if(current_board%3 == 1){
-                        if(current_board%3 == 0)
-                            DisplayBoard('x', 0, 1);
-                        else if(current_board%3 == 1)
-                            DisplayBoard('x', 1, 1);
-                        else
-                            DisplayBoard('x', 2, 1);
-                    }
-                    else{
-                        if(current_board%3 == 0)
-                            DisplayBoard('x', 0, 2);
-                        else if(current_board%3 == 1)
-                            DisplayBoard('x', 1, 2);
-                        else
-                            DisplayBoard('x', 2, 2);
-                    }*/
-
-
-
-                    Thread.Sleep(500);
-                    
+                        DisplayBoard('x', 0, (current_board-current_board%3)/3);
+                    else if(current_board%3 == 1)
+                        DisplayBoard('x', 1, (current_board-current_board%3)/3);
+                    else
+                        DisplayBoard('x', 2, (current_board-current_board%3)/3);
                 }
+
+                //Convert.ToInt32(25*Math.Ceiling((double)num_saved_games/3))
+                
                 
 
                 //Delete exported matrix
@@ -554,6 +526,64 @@ namespace Sudoku
                     }
                 }*/
                 
+            }
+
+            Message("Choose a game to load   1 - " + num_saved_games, Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3)));
+
+            var key = Console.ReadKey();
+
+            using(StreamReader sr = new StreamReader(dir)){
+
+                for(int i = 1; i < 20*Int32.Parse(key.ToString().Substring(1)); i++){
+                    sr.ReadLine();
+                }
+
+                for(int i = 0; i < matrix.GetLength(1); i++){
+                    
+                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
+                    
+                    for(int j = 0; j < matrix.GetLength(0); j++){
+                        matrix[i, j] = values[j];
+                    }
+                }
+
+                sr.ReadLine();
+
+                for(int i = 0; i < matrix.GetLength(1); i++){
+                    
+                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
+                    
+                    for(int j = 0; j < matrix.GetLength(0); j++){
+                        old_matrix[i, j] = values[j];
+                    }
+                }
+
+
+
+                /*
+                if(!key.Equals(ConsoleKey.D1)){
+                    for(int i = 0; i < 11; i++){
+                        sr.ReadLine();
+                    }
+                }
+
+                for(int i = 1; i <= num_saved_games; i++){
+
+                    if(i.Equals(key)){
+
+                        for(int i = 0; i < matrix.GetLength(1); i++){
+                    
+                        int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
+                    
+                        for(int j = 0; j < matrix.GetLength(0); j++){
+                            matrix[i, j] = values[j];
+                        }
+                    }
+                    }
+
+                    }
+                }*/
+
             }
 
             //RulesMenu();
