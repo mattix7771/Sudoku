@@ -325,18 +325,23 @@ namespace Sudoku
                         matrix[coordinates.Item2, coordinates.Item1] = move.val;
                         break;
 
+                    //save game
                     case ConsoleKey.S:
                         
                         (int, int) s_pos = Console.GetCursorPosition();
+
                         //Delete character entered
                         Replace(val, s_pos);
 
+                        //Create file if it foesn't exist
                         if(!File.Exists("boards.csv")){
                             File.Create("boards.csv");
                         }
 
+                        //Streamwrite to write values to csv file
                         using(StreamWriter sw = new StreamWriter("boards.csv", true)){
                             
+                            //Save changed board
                             for(int i = 0; i < matrix.GetLength(1); i++){
                                 for(int j = 0; j < matrix.GetLength(0); j++){
 
@@ -351,6 +356,7 @@ namespace Sudoku
 
                             sw.Write("\n");
 
+                            //Save original board
                             for(int i = 0; i < old_matrix.GetLength(1); i++){
                                 for(int j = 0; j < old_matrix.GetLength(0); j++){
                                     
@@ -367,7 +373,8 @@ namespace Sudoku
                             sw.Close();
                         }
                         
-                        
+                        Message("Game saved");
+
                         break;
 
                     case ConsoleKey.M:
@@ -472,14 +479,14 @@ namespace Sudoku
 
         static void LoadGame(String msg = ""){
 
+            String dir = "boards.csv";
+
             //Check if file exists
-            if(!File.Exists("boards.csv")){
+            if(!File.Exists(dir) || new FileInfo(dir).Length == 0){
                 menu("No games have been played");
             }
             
             Console.Clear();
-
-            String dir = "boards.csv";
 
             int num_saved_games = 0;
 
@@ -522,7 +529,7 @@ namespace Sudoku
             }
 
             //User can choose which board to load
-            Message("Choose a game to load   1 - " + num_saved_games + " or x to quit", Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3)));
+            Message("Select a game to load   1 - " + num_saved_games + ", X to quit or M for the Main Menu ", Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3)));
 
             Console.SetCursorPosition(1, Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3))+1);
 
@@ -531,11 +538,15 @@ namespace Sudoku
             //Choose board number
             var key = Console.ReadKey();
 
-            //Quit program if x is entered
+            //Quit program if X is entered
             if(key.Equals(ConsoleKey.X)){
                 Console.Clear();
                 Environment.Exit(1);
             }
+
+            //Back to main menu if M is enetred
+            if(key.Equals(ConsoleKey.M))
+                menu();
 
             //Error handling - not a number
             if((int.TryParse(key.Key.ToString().Substring(1), out int val)) == false){
@@ -580,10 +591,18 @@ namespace Sudoku
                         old_matrix[i, j] = values[j];
                     }
                 }
-
-                //Return to main menu
-                menu("Board" + num_key + "has been loaded");
             }
+
+            //Delete loaded board so boards aren't saved twice
+            List<String> lines_list = File.ReadAllLines(dir).ToList();
+            for(int i = 0; i < 20; i++){
+                lines_list.RemoveAt((20*num_key-20));
+            }
+            File.WriteAllLines(dir, lines_list.ToArray());
+
+            //Return to main menu
+            menu("Board" + num_key + "has been loaded");
+
         }
 
         static void SolveBoard()
