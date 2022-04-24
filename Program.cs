@@ -61,47 +61,44 @@ namespace Sudoku
 
         static void menu(String msg = "")
         {
-
-
+            
             Console.Clear();
             Welcome();
+            
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
 
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play New Game");
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Play Saved Game");
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. How to play");
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "4. Quit");
-
+            
             Message(msg, 35);
-            msg = null;
 
             int top = Console.CursorTop;
             Console.SetCursorPosition(Console.WindowWidth / 3, top);
 
-            int option = Console.Read();
+            var key = Console.ReadKey().Key;
 
-            switch (option)
+            switch (key)
             {
-                case '1':
-                    Console.Clear();
+                case ConsoleKey.D1:
                     Game();
                     //Console.WriteLine("Option to play game");
                     break;
 
-                case '2':
+                case ConsoleKey.D2:
                     Console.Clear();
                     LoadGame();
                     //Console.WriteLine("Option to solve board");
                     break;
 
-                case '3':
+                case ConsoleKey.D3:
                     Rules();
                     RulesMenu();
                     break;
 
-                case '4':
-                    Console.Clear();
-                    Environment.Exit(1);
+                case ConsoleKey.D4:
+                    Quit();
                     break;
 
                 default:
@@ -113,6 +110,8 @@ namespace Sudoku
 
         static void Game()
         {
+            Console.Clear();
+
             DisplayBoard();
             DisplayOptions();
 
@@ -378,17 +377,52 @@ namespace Sudoku
                         break;
 
                     case ConsoleKey.M:
-                        menu("OVVERWRITE That duking stoopid message pls");
+
+                        (int, int) m_pos = Console.GetCursorPosition();
+
+                        Replace(val, m_pos);
+
+                        Message("Have you saved the game? If not, your progress might be lost. (Y/N)");
+                        while(true){
+                            var m_key = Console.ReadKey().Key;
+
+                            Replace(val, m_pos);
+
+                            if(m_key == ConsoleKey.Y)
+                                menu();
+                            else if(m_key == ConsoleKey.N)
+                                Game();
+                            else
+                                Message("Enter Y to go to the Main Menu or N to go back to the game", 21);
+                        }
+                        menu();
                         break;
 
                     case ConsoleKey.V:
-                        undoValue(pos, val);
+
+                        (int, int) v_pos = Console.GetCursorPosition();
+
+                        Replace(val, v_pos);
                         SolveBoard();
+                        
+                        while(true){
+                            var v_key = Console.ReadKey().Key;
+
+                            Replace(val, v_pos);
+
+                            if(v_key == ConsoleKey.M)
+                                menu();
+                            else if(v_key == ConsoleKey.X)
+                                Quit();
+                            else{
+                                Message("Enter M for menu or X to Quit", 21);
+                                Console.SetCursorPosition(v_pos.Item1-1, v_pos.Item2);
+                            }
+                        }
                         break;
 
                     case ConsoleKey.X:
-                        Console.Clear();
-                        Environment.Exit(1);
+                        Quit();
                         break;
 
                     default:
@@ -446,16 +480,6 @@ namespace Sudoku
             Console.SetCursorPosition(0, top);
             Console.WriteLine(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
-        }
-
-        static void undoValue((int, int) pos, int val)
-        {
-            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
-            if (val == 0)
-                Console.Write(' ');
-            else
-                Console.Write(val);
-            Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
         }
 
         static void Replace(int val, (int, int) pos)
@@ -539,13 +563,12 @@ namespace Sudoku
             var key = Console.ReadKey();
 
             //Quit program if X is entered
-            if(key.Equals(ConsoleKey.X)){
-                Console.Clear();
-                Environment.Exit(1);
+            if(key.Key.Equals(ConsoleKey.X)){
+                Quit();
             }
 
             //Back to main menu if M is enetred
-            if(key.Equals(ConsoleKey.M))
+            if(key.Key.Equals(ConsoleKey.M))
                 menu();
 
             //Error handling - not a number
@@ -601,7 +624,7 @@ namespace Sudoku
             File.WriteAllLines(dir, lines_list.ToArray());
 
             //Return to main menu
-            menu("Board" + num_key + "has been loaded");
+            menu("Board " + num_key + " has been loaded");
 
         }
 
@@ -831,8 +854,7 @@ namespace Sudoku
                     menu();
                 else if (key == ConsoleKey.X)
                 {
-                    Console.Clear();
-                    Environment.Exit(1);
+                    Quit();
                 }
                 else
                 {
@@ -897,6 +919,11 @@ new string(' ', Console.WindowWidth / 5) + @"        ___\///////////________\///
             Console.WriteLine("\n" + sudoku + "\n\n\n");
 
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        static void Quit(){
+            Console.Clear();
+            Environment.Exit(1);
         }
     }
 }
