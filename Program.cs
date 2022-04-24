@@ -68,8 +68,9 @@ namespace Sudoku
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "Enter the option's number to start");
 
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Play New Game");
-            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Load Game");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Play Saved Game");
             Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. How to play");
+            Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "4. Quit");
 
             Message(msg, 35);
             msg = null;
@@ -96,6 +97,11 @@ namespace Sudoku
                 case '3':
                     Rules();
                     RulesMenu();
+                    break;
+
+                case '4':
+                    Console.Clear();
+                    Environment.Exit(1);
                     break;
 
                 default:
@@ -464,7 +470,7 @@ namespace Sudoku
 
         }*/
 
-        static void LoadGame(){
+        static void LoadGame(String msg = ""){
 
             //Check if file exists
             if(!File.Exists("boards.csv")){
@@ -477,21 +483,24 @@ namespace Sudoku
 
             int num_saved_games = 0;
 
+            //Streamreader to read csv file
             using(StreamReader sr = new StreamReader(dir)){
                 
                 int line_count = File.ReadAllLines(dir).Count();    //Amount of lines in csv
                 num_saved_games = line_count/20;                    //Amount of saved games
                 String[] lines = File.ReadAllLines(dir);            //All the contents of the file
 
-                //Export matrix from csv
+                //Display all boards on console so that user can see all saved games
                 for(int current_board = 0; current_board < num_saved_games; current_board++){      //Board being procesed
 
+                    //Skip to relevant board in file
                     if(current_board != 0){
                         for(int i = 0; i < 11; i++){
                             sr.ReadLine();
                         }
                     }  
 
+                    //Temporarily load board to program
                     for(int i = 0; i < matrix.GetLength(1); i++){
                     
                         int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
@@ -501,6 +510,7 @@ namespace Sudoku
                         }
                     }
 
+                    //Output board to console. The second and third parameter determine where the board is placed in console
                     if(current_board%3 == 0)
                         DisplayBoard('x', 0, (current_board-current_board%3)/3);
                     else if(current_board%3 == 1)
@@ -509,35 +519,47 @@ namespace Sudoku
                         DisplayBoard('x', 2, (current_board-current_board%3)/3);
                 }
 
-                //Convert.ToInt32(25*Math.Ceiling((double)num_saved_games/3))
-                
-                
-
-                //Delete exported matrix
-                /*File.WriteAllLines("boards.csv", lines.Skip(10).ToArray());
-
-                //Export old_matrix from csv
-                for(int i = 0; i < matrix.GetLength(1); i++){
-                    
-                    int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);
-                    
-                    for(int j = 0; j < matrix.GetLength(0); j++){
-                        matrix[i, j] = values[j];
-                    }
-                }*/
-                
             }
 
-            Message("Choose a game to load   1 - " + num_saved_games, Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3)));
+            //User can choose which board to load
+            Message("Choose a game to load   1 - " + num_saved_games + " or x to quit", Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3)));
 
+            Console.SetCursorPosition(1, Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3))+1);
+
+            Message(msg, Convert.ToInt32(21*Math.Ceiling((double)num_saved_games/3))+4);
+
+            //Choose board number
             var key = Console.ReadKey();
 
+            //Quit program if x is entered
+            if(key.Equals(ConsoleKey.X)){
+                Console.Clear();
+                Environment.Exit(1);
+            }
+
+            //Error handling - not a number
+            if((int.TryParse(key.Key.ToString().Substring(1), out int val)) == false){
+                LoadGame("Please enter a value");
+            }
+
+            int num_key = Int32.Parse(key.Key.ToString().Substring(1));
+
+            //Error handling - not a valid board number
+            if(!(num_key <= num_saved_games) || !(num_key > 0)){
+                LoadGame("There are only " + num_saved_games + " saved games, enter a valid game");
+            }
+
+            //Load user chosen board into program
             using(StreamReader sr = new StreamReader(dir)){
 
-                for(int i = 1; i < 20*Int32.Parse(key.ToString().Substring(1)); i++){
-                    sr.ReadLine();
+                //Skip to relevant board
+                if(num_key != 1){
+                    for(int i = 0; i < 20*num_key-20; i++){
+                        sr.ReadLine();
+                    }
                 }
-
+                
+                //Load user chosen board into program
                 for(int i = 0; i < matrix.GetLength(1); i++){
                     
                     int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
@@ -546,9 +568,10 @@ namespace Sudoku
                         matrix[i, j] = values[j];
                     }
                 }
-
+                
                 sr.ReadLine();
 
+                //Load user chosen original board into program (used if user wants the program to solve the board automatically)
                 for(int i = 0; i < matrix.GetLength(1); i++){
                     
                     int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
@@ -558,36 +581,9 @@ namespace Sudoku
                     }
                 }
 
-
-
-                /*
-                if(!key.Equals(ConsoleKey.D1)){
-                    for(int i = 0; i < 11; i++){
-                        sr.ReadLine();
-                    }
-                }
-
-                for(int i = 1; i <= num_saved_games; i++){
-
-                    if(i.Equals(key)){
-
-                        for(int i = 0; i < matrix.GetLength(1); i++){
-                    
-                        int[] values = Array.ConvertAll(sr.ReadLine().Split(','), int.Parse);       //Current line
-                    
-                        for(int j = 0; j < matrix.GetLength(0); j++){
-                            matrix[i, j] = values[j];
-                        }
-                    }
-                    }
-
-                    }
-                }*/
-
+                //Return to main menu
+                menu("Board" + num_key + "has been loaded");
             }
-
-            //RulesMenu();
-
         }
 
         static void SolveBoard()
