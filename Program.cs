@@ -11,30 +11,10 @@ namespace Sudoku
         static (int, int) coordinates = (0, 0);
         const int board_len = 37;
         static List<Move> moves = new List<Move>();
+        static Random rand = new Random();
+        static int counter = 0;
 
-        static int[,] matrix = new int[9, 9] { { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
-                                               { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
-                                               { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
-                                               { 0, 0, 3, 0, 1, 0, 0, 8, 0 },
-                                               { 9, 0, 0, 8, 6, 3, 0, 0, 5 },
-                                               { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
-                                               { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
-                                               { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
-                                               { 0, 0, 5, 2, 0, 6, 3, 0, 0 }
-            };
-
-        static int[,] old_matrix = new int[9, 9] {  { 0, 0, 6, 5, 0, 8, 4, 0, 0 },
-                                                    { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
-                                                    { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
-                                                    { 0, 0, 3, 0, 1, 0, 0, 8, 0 },
-                                                    { 9, 0, 0, 8, 6, 3, 0, 0, 5 },
-                                                    { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
-                                                    { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
-                                                    { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
-                                                    { 0, 0, 5, 2, 0, 6, 3, 0, 0 }
-            };
-
-        /*static int[,] matrix = new int[9, 9] { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        static int[,] matrix = new int[9, 9] { { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -43,7 +23,40 @@ namespace Sudoku
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-            };*/
+            };
+
+        static int[,] old_matrix = new int[9, 9] {  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                    { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            };
+
+        static int[,] create_matrix = new int[9, 9] {  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                       { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            };
+
+        static int[,] create_matrix_copy = new int[9, 9] {  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                            { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            };
 
         static void Main(string[] args)
         {
@@ -82,14 +95,52 @@ namespace Sudoku
             switch (key)
             {
                 case ConsoleKey.D1:
-                    Game();
-                    //Console.WriteLine("Option to play game");
+
+                    Console.WriteLine("\n " + new string(' ', Console.WindowWidth / 3) + "Choose a difficulty:");
+                    Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "1. Easy");
+                    Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "2. Medium");
+                    Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "3. Hard");
+                    Console.WriteLine(new string(' ', Console.WindowWidth / 3) + "4. Extreme");
+
+                    var new_key = Console.ReadKey().Key;
+
+                    switch(new_key){
+
+                        case ConsoleKey.D1:
+                                Console.Clear();
+                                Message("Your board is being created", 8, 60);
+                                CreateBoard(30);
+                                old_matrix = matrix;
+                            break;
+
+                        case ConsoleKey.D2:
+                                Console.Clear();
+                                Message("Your board is being created", 8, 60);
+                                CreateBoard(45);
+                            break;
+
+                        case ConsoleKey.D3:
+                                Console.Clear();
+                                Message("Your board is being created", 8, 60);
+                                CreateBoard(60);
+                            break;
+
+                        case ConsoleKey.D4:
+                                Console.Clear();
+                                Message("Your board is being created", 8, 60);
+                                CreateBoard(80);
+                            break;
+
+                        default:
+                                menu("Invalid option, enter a valid one");
+                            break;
+
+                    }
                     break;
 
                 case ConsoleKey.D2:
                     Console.Clear();
                     LoadGame();
-                    //Console.WriteLine("Option to solve board");
                     break;
 
                 case ConsoleKey.D3:
@@ -382,7 +433,7 @@ namespace Sudoku
 
                         Replace(val, m_pos);
 
-                        Message("Have you saved the game? If not, your progress might be lost. (Y/N)");
+                        Message("Have you saved the game? If not, your progress might be lost. Are you sure you want to leave? (Y/N)");
                         while(true){
                             var m_key = Console.ReadKey().Key;
 
@@ -395,7 +446,6 @@ namespace Sudoku
                             else
                                 Message("Enter Y to go to the Main Menu or N to go back to the game", 21);
                         }
-                        menu();
                         break;
 
                     case ConsoleKey.V:
@@ -454,22 +504,15 @@ namespace Sudoku
                 }
                 Console.ForegroundColor = ConsoleColor.White;
 
-                //Message(matrix[coordinates.Item1, coordinates.Item2].ToString());
-                /*
-                int x = Console.GetCursorPosition().Left;
-                int y = Console.GetCursorPosition().Top;
-                String coo = x.ToString() + ", " + y.ToString();
-                Message(coo);*/
-
-            } //while (!Console.ReadKey().Equals('x'));
+            }
         }
 
 
-        static void Message(String msg, int top = 20)
+        static void Message(String msg, int top = 20, int left = 1)
         {
             Console.ForegroundColor = ConsoleColor.White;
             (int, int) pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(0, top);
+            Console.SetCursorPosition(left, top);
             Console.WriteLine(msg + new string(' ', Console.WindowWidth - msg.Length));
             Console.SetCursorPosition(pos.Item1, pos.Item2);
         }
@@ -495,11 +538,6 @@ namespace Sudoku
             }
             Console.SetCursorPosition(pos.Item1 - 1, pos.Item2);
         }
-
-        /*static int CreateBoard()
-        {
-
-        }*/
 
         static void LoadGame(String msg = ""){
 
@@ -623,9 +661,133 @@ namespace Sudoku
             }
             File.WriteAllLines(dir, lines_list.ToArray());
 
-            //Return to main menu
-            menu("Board " + num_key + " has been loaded");
+            //Play the board
+            Game();
 
+        }
+
+        static void CreateBoard(int diff)
+        {
+            int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            nums = Shuffle(nums);
+
+            int x = create_matrix.GetLength(0);
+            int y = create_matrix.GetLength(1);
+
+            for (int i = 0; i < x; i++)
+            {
+                for (int j = 0; j < y; j++)
+                {
+                    if (create_matrix[i, j] == 0)
+                    {
+                        foreach(int val in nums)
+                        {
+                            if (Create_checkValue(i, j, val))
+                            {
+                                create_matrix[i, j] = val;
+                                CreateBoard(diff);
+                                create_matrix[i, j] = 0;
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
+            //Once a full board has been found prepare it
+            PrepareBoard(diff);
+        }
+
+        static void PrepareBoard(int diff){
+
+            while(diff>0){
+
+                int x = rand.Next(0, 9);
+                int y = rand.Next(0, 9);
+
+                if(create_matrix[x, y] != 0){
+
+                    int redo = create_matrix[x, y];
+
+                    create_matrix[x, y] = 0;
+
+                    create_matrix_copy = create_matrix;
+
+                    counter = 0;
+                    CreateSolve();
+                    if(counter > 1){
+                        create_matrix[x, y] = redo;
+                    }
+                    diff--;
+
+                }
+
+            }
+
+            matrix = create_matrix;
+            Game();
+        }
+
+
+
+        static bool Create_checkValue(int x, int y, int num)
+        {
+            int hor = create_matrix.GetLength(0);
+            int ver = create_matrix.GetLength(1);
+
+            for (int i = 0; i < hor; i++)
+            {
+                if (create_matrix[x, i] == num)
+                    return false;
+            }
+            for (int i = 0; i < ver; i++)
+            {
+                if (create_matrix[i, y] == num)
+                    return false;
+            }
+            //somehow check 3x3 sqaures
+            int x0 = (x / 3) * 3;
+            int y0 = (y / 3) * 3;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (create_matrix[x0 + i, y0 + j] == num)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+
+            return true;
+        }
+
+        static void CreateSolve()
+        {
+            int x = create_matrix_copy.GetLength(0);
+            int y = create_matrix_copy.GetLength(1);
+
+            for (int i = 0; i < x; i++)
+            {
+                for (int j = 0; j < y; j++)
+                {
+                    if (create_matrix_copy[i, j] == 0)
+                    {
+                        for (int num = 1; num < 10; num++)
+                        {
+                            if (Create_checkValue(i, j, num))
+                            {
+                                create_matrix_copy[i, j] = num;
+                                CreateSolve();
+                                create_matrix_copy[i, j] = 0;
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
+            counter++;
         }
 
         static void SolveBoard()
@@ -708,6 +870,22 @@ namespace Sudoku
             }
 
             return true;
+        }
+
+        public static int[] Shuffle (int[] array)
+        {
+            int n = array.Length;
+
+            //Randomize array
+            for(int i = 0; i < array.Length; i++){
+                int ran = rand.Next(n--);
+                int temp = array[n];
+                array[n] = array[ran];
+                array[ran] = temp;
+            }
+
+            //Return randomized array
+            return array;
         }
 
         static void DisplayBoard(char margin = 'c', int x_pos = 0, int y_pos = 0)
