@@ -110,7 +110,6 @@ namespace Sudoku
                                 Console.Clear();
                                 Message("Your board is being created", 8, 60);
                                 CreateBoard(30);
-                                old_matrix = matrix;
                             break;
 
                         case ConsoleKey.D2:
@@ -162,6 +161,8 @@ namespace Sudoku
         static void Game()
         {
             Console.Clear();
+
+            coordinates = (0, 0);
 
             DisplayBoard();
             DisplayOptions();
@@ -724,6 +725,12 @@ namespace Sudoku
             }
 
             matrix = create_matrix;
+
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    old_matrix[i, j] = matrix[i, j];
+                }
+            }
             Game();
         }
 
