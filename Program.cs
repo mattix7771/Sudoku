@@ -11,6 +11,8 @@ namespace Sudoku
         static (int, int) coordinates = (0, 0);
         const int board_len = 37;
         static List<Move> moves = new List<Move>();
+        static List<Move> redo_moves = new List<Move>();
+        static List<Move> all_moves = new List<Move>();
         static Random rand = new Random();
         static int counter = 0;
 
@@ -57,6 +59,18 @@ namespace Sudoku
                                                             { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                             { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
             };
+
+        static int[,] solution_matrix = new int[9, 9] {  { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                                         { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+            };
+
 
         static void Main(string[] args)
         {
@@ -109,24 +123,68 @@ namespace Sudoku
                         case ConsoleKey.D1:
                                 Console.Clear();
                                 Message("Your board is being created", 8, 60);
+                                
+                                moves.Clear();
+                                redo_moves.Clear();
+                                for(int i = 0; i < 9; i++){
+                                    for(int j = 0; j < 9; j++){
+                                        matrix[i, j] = 0;
+                                        old_matrix[i, j] = 0;
+                                        create_matrix[i, j] = 0;
+                                        create_matrix_copy[i, j] = 0;
+                                    }
+                                }
                                 CreateBoard(30);
                             break;
 
                         case ConsoleKey.D2:
                                 Console.Clear();
                                 Message("Your board is being created", 8, 60);
+
+                                moves.Clear();
+                                redo_moves.Clear();
+                                for(int i = 0; i < 9; i++){
+                                    for(int j = 0; j < 9; j++){
+                                        matrix[i, j] = 0;
+                                        old_matrix[i, j] = 0;
+                                        create_matrix[i, j] = 0;
+                                        create_matrix_copy[i, j] = 0;
+                                    }
+                                }
                                 CreateBoard(45);
                             break;
 
                         case ConsoleKey.D3:
                                 Console.Clear();
                                 Message("Your board is being created", 8, 60);
+
+                                moves.Clear();
+                                redo_moves.Clear();
+                                for(int i = 0; i < 9; i++){
+                                    for(int j = 0; j < 9; j++){
+                                        matrix[i, j] = 0;
+                                        old_matrix[i, j] = 0;
+                                        create_matrix[i, j] = 0;
+                                        create_matrix_copy[i, j] = 0;
+                                    }
+                                }
                                 CreateBoard(60);
                             break;
 
                         case ConsoleKey.D4:
                                 Console.Clear();
                                 Message("Your board is being created", 8, 60);
+
+                                moves.Clear();
+                                redo_moves.Clear();
+                                for(int i = 0; i < 9; i++){
+                                    for(int j = 0; j < 9; j++){
+                                        matrix[i, j] = 0;
+                                        old_matrix[i, j] = 0;
+                                        create_matrix[i, j] = 0;
+                                        create_matrix_copy[i, j] = 0;
+                                    }
+                                }
                                 CreateBoard(80);
                             break;
 
@@ -175,17 +233,6 @@ namespace Sudoku
                 int val = matrix[coordinates.Item2, coordinates.Item1];
 
                 var key = Console.ReadKey().Key;
-
-                /*
-                List<ConsoleKey> forbidden_keys = new List<ConsoleKey>();
-                forbidden_keys.Add(ConsoleKey.Tab);
-                
-                if(forbidden_keys.Contains(Console.ReadKey().Key)){
-                    key = Console.ReadKey(false).Key;
-                }
-                else{
-                    key = Console.ReadKey(true).Key;
-                }*/
 
 
 
@@ -326,6 +373,40 @@ namespace Sudoku
                             Console.SetCursorPosition(num_pos.Item1 - 1, num_pos.Item2);
                             moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], num_pos.Item1 - 1, num_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = (Int32.Parse(key.ToString().Substring(1)));
+                            all_moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], num_pos.Item1 - 1, num_pos.Item2, coordinates.Item1, coordinates.Item2));
+
+                            int counter = 0;
+                            if(checkFullBoard()){
+                                for(int i = 0; i < 9; i++){
+                                    for(int j = 0; j < 9; j++){
+                                        if(matrix[i, j] == solution_matrix[i, j])
+                                            counter++;
+                                    }
+                                }
+                            
+                                if(counter == 81){
+                                    Message("Congratulations! You have completed the board correctly");
+                                    Message("Enter R to Replay, M for menu or X to Quit", 21);
+                                
+                                    while(true){
+                                        var new_key = Console.ReadKey().Key;
+                                        
+                                        if(new_key == ConsoleKey.R)
+                                            Replay();
+                                        else if(new_key == ConsoleKey.M)
+                                            menu();
+                                        else if(new_key == ConsoleKey.X)
+                                            Quit();
+                                        else
+                                            Message("Invalid option, please enter a valid one");
+                                    }
+                                
+
+                                }
+                                else
+                                    Message("The board is not correct");
+
+                                }
                             Console.ForegroundColor = ConsoleColor.White;
                         }
 
@@ -349,6 +430,7 @@ namespace Sudoku
                             Console.SetCursorPosition(d_pos.Item1 - 1, d_pos.Item2);
                             moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], d_pos.Item1 - 1, d_pos.Item2, coordinates.Item1, coordinates.Item2));
                             matrix[coordinates.Item2, coordinates.Item1] = 0;
+                            all_moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], d_pos.Item1 - 1, d_pos.Item2, coordinates.Item1, coordinates.Item2));
                         }
                         break;
 
@@ -368,12 +450,41 @@ namespace Sudoku
                         //Get last move and delete from list
                         Move move = moves[moves.Count - 1];
                         moves.Remove(moves[moves.Count - 1]);
+                        
+                        
 
                         //Undo move
                         Console.SetCursorPosition(move.x, move.y);
                         Replace(move.val, (move.x + 1, move.y));
                         coordinates = (move.matrix_x, move.matrix_y);
+                        redo_moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], move.x, move.y, coordinates.Item1, coordinates.Item2));
                         matrix[coordinates.Item2, coordinates.Item1] = move.val;
+                        all_moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], move.x - 1, move.y, coordinates.Item1, coordinates.Item2));
+                        break;
+
+                    case ConsoleKey.R:
+                        (int, int) r_pos = Console.GetCursorPosition();
+                        //Replace character enetered
+                        Replace(val, r_pos);
+
+                        //Check if any move has been made
+                        if (!redo_moves.Any())
+                        {
+                            Message("No moves to redo!");
+                            break;
+                        }
+
+                        //Get last move and delete from list
+                        Move redo_move = redo_moves[redo_moves.Count - 1];
+                        redo_moves.Remove(redo_moves[redo_moves.Count - 1]);
+
+                        //Redo move
+                        Console.SetCursorPosition(redo_move.x, redo_move.y);
+                        Replace(redo_move.val, (redo_move.x + 1, redo_move.y));
+                        coordinates = (redo_move.matrix_x, redo_move.matrix_y);
+                        moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], redo_move.x, redo_move.y, coordinates.Item1, coordinates.Item2));
+                        matrix[coordinates.Item2, coordinates.Item1] = redo_move.val;
+                        all_moves.Add(new Move(matrix[coordinates.Item2, coordinates.Item1], redo_move.x - 1, redo_move.y, coordinates.Item1, coordinates.Item2));
                         break;
 
                     //save game
@@ -454,6 +565,11 @@ namespace Sudoku
                         (int, int) v_pos = Console.GetCursorPosition();
 
                         Replace(val, v_pos);
+                        for(int i = 0; i < 9; i++){
+                            for(int j = 0; j < 9; j++){
+                                matrix[i, j] = old_matrix[i, j];
+                            }
+                        }
                         SolveBoard();
                         
                         while(true){
@@ -465,8 +581,10 @@ namespace Sudoku
                                 menu();
                             else if(v_key == ConsoleKey.X)
                                 Quit();
+                            else if(v_key == ConsoleKey.R)
+                                Replay();
                             else{
-                                Message("Enter M for menu or X to Quit", 21);
+                                Message("Enter R to Replay, M for menu or X to Quit", 21);
                                 Console.SetCursorPosition(v_pos.Item1-1, v_pos.Item2);
                             }
                         }
@@ -667,6 +785,26 @@ namespace Sudoku
 
         }
 
+        static void Replay(){
+
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    matrix[i, j] = old_matrix[i, j];
+                }
+            }
+
+            DisplayBoard();
+            Thread.Sleep(1500);
+
+            for(int i = 0; i < all_moves.Count; i++){
+                matrix[all_moves[i].matrix_y, all_moves[i].matrix_x] = all_moves[i].val;
+                
+                Thread.Sleep(1000);
+                DisplayBoard();
+            }
+
+        }
+
         static void CreateBoard(int diff)
         {
             int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -700,6 +838,12 @@ namespace Sudoku
 
         static void PrepareBoard(int diff){
 
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    solution_matrix[i, j] = create_matrix[i, j];
+                }
+            }
+
             while(diff>0){
 
                 int x = rand.Next(0, 9);
@@ -724,7 +868,11 @@ namespace Sudoku
 
             }
 
-            matrix = create_matrix;
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    matrix[i, j] = create_matrix[i, j];
+                }
+            }
 
             for(int i = 0; i < 9; i++){
                 for(int j = 0; j < 9; j++){
@@ -799,8 +947,6 @@ namespace Sudoku
 
         static void SolveBoard()
         {
-            matrix = old_matrix;
-
             int x = matrix.GetLength(0);
             int y = matrix.GetLength(1);
 
@@ -825,7 +971,7 @@ namespace Sudoku
             }
 
             DisplayBoard();
-            Message("Sudoku solved!!! Press the (M)enu button to return to the main menu");
+            Message("Sudoku solved!!! Press (R) to Replay or the (M)enu button to return to the main menu");
         }
 
         static bool checkValue(int x, int y, int num)
@@ -993,7 +1139,7 @@ namespace Sudoku
 
         static void DisplayOptions()
         {
-            String[] options = { "D - DELETE", "U - UNDO", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
+            String[] options = { "D - DELETE", "U - UNDO", "R - REDO", "M - MENU", "V - SOLVE", "S - SAVE", "X - QUIT" };
 
             for (int i = 0; i < options.Length; i++)
             {
